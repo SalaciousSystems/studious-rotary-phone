@@ -7,18 +7,6 @@ on:
       - "v*"
 
 jobs:
-  init:
-    runs-on: ubuntu-latest
-    outputs:
-      tag: ${{ steps.setvars.outputs.tag }}
-      branch: ${{ steps.setvars.outputs.branch }}
-    steps:
-      - name: Set vars
-        id: setvars
-        run: |
-          TAG=${GITHUB_REF#refs/tags/}
-          echo ::set-output name=tag::$TAG
-          echo ::set-output name=branch::${{github.base_ref}}
   build:
     runs-on: ubuntu-latest
     steps:
@@ -27,14 +15,16 @@ jobs:
       - name: Prepare
         run: |
           mkdir dist
-      - name: Generate build files
+          echo ${GITHUB_BASE_REF}
+          echo ${GITHUB_REF#refs/tags/}
+      - name: Cross compile binaries
         uses: thatisuday/go-cross-build@v1
         with:
-            platforms: 'linux/amd64,linux/aarch64, darwin/amd64, darwin/aarch64, windows/amd64'
+            platforms: 'linux/amd64, linux/aarch64, darwin/amd64, darwin/aarch64, windows/amd64'
             name: 'test'
             compress: true
             dest: 'dist'
-            ldflags: "-X github.com/SalaciousSystems/studious-rotary-phone/internal/app.buildVersion={{needs.init.outputs.tag}} -X github.com/SalaciousSystems/studious-rotary-phone/internal/app.buildBranch={{needs.init.outputs.branch}}"
+            ldflags: "-X github.com/SalaciousSystems/studious-rotary-phone/internal/app.buildVersion=${GITHUB_REF#refs/tags/} -X github.com/SalaciousSystems/studious-rotary-phone/internal/app.buildBranch=${GITHUB_BASE_REF}"
 
       # https://github.com/softprops/action-gh-release
       - name: Release
