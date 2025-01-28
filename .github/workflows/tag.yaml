@@ -35,3 +35,4 @@ jobs:
         with:
           draft: true
           token: ${{ secrets.GITHUB_TOKEN }}
+          files: dist/*
