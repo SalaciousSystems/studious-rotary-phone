@@ -1,0 +1,36 @@
+---
+name: "tagged-release"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Prepare
+        run: |
+          mkdir dist
+      - name: Generate build files
+        uses: thatisuday/go-cross-build@v1
+        with:
+            platforms: 'linux/amd64, darwin/amd64, windows/amd64'
+            name: 'test'
+            compress: true
+            dest: 'dist'
+      # - name: CrossCompile
+      #   uses: actions/setup-go@v5
+      #   with:
+      #     go-version: stable
+      # - name: Build
+      #   run: go build -o test .
+
+      # https://github.com/softprops/action-gh-release
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
