@@ -16,7 +16,8 @@ jobs:
       - name: Set vars
         id: setvars
         run: |
-          echo ::set-output name=tag::${{github.ref}#refs/}
+          TAG=${GITHUB_REF#refs/tags/}
+          echo ::set-output name=tag::$TAG
           echo ::set-output name=branch::${{github.base_ref}}
   build:
     runs-on: ubuntu-latest
