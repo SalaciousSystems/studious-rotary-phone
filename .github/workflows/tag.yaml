@@ -7,6 +7,17 @@ on:
       - "v*"
 
 jobs:
+  init:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.setvars.outputs.tag }}
+      branch: ${{ steps.setvars.outputs.branch }}
+    steps:
+      - name: Set vars
+        id: setvars
+        run: |
+          echo ::set-output name=tag::${{github.ref#refs/*/}}
+          echo ::set-output name=branch::${{github.base_ref}}
   build:
     runs-on: ubuntu-latest
     steps:
@@ -22,12 +33,7 @@ jobs:
             name: 'test'
             compress: true
             dest: 'dist'
-      # - name: CrossCompile
-      #   uses: actions/setup-go@v5
-      #   with:
-      #     go-version: stable
-      # - name: Build
-      #   run: go build -o test .
+            ldflags: "-X github.com/SalaciousSystems/studious-rotary-phone/internal/app.buildVersion={{needs.init.outputs.tag}} -X github.com/SalaciousSystems/studious-rotary-phone/internal/app.buildBranch={{needs.init.outputs.branch}}"
 
       # https://github.com/softprops/action-gh-release
       - name: Release
