@@ -18,7 +18,7 @@ jobs:
           echo ${GITHUB_BASE_REF}
           echo ${GITHUB_REF#refs/tags/}
       - name: Cross compile binaries
-        uses: thatisuday/go-cross-build@v1
+        uses: thatisuday/go-cross-build@v1.1.0
         with:
             platforms: 'linux/amd64, linux/aarch64, darwin/amd64, darwin/aarch64, windows/amd64'
             name: 'test'
